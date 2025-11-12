@@ -1,8 +1,11 @@
 package com.finan.orcamento.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -29,14 +32,20 @@ public class UsuarioModel implements Serializable {
     @Column(name="nome_mae")
     private String nomeMae;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("usuario-orcamento")
+    private List<OrcamentoModel> orcamentos = new ArrayList<>();
+
+
     public UsuarioModel(){}
 
-    public UsuarioModel(Long id, String nomeUsuario, String rg, String cpf, String nomeMae) {
+    public UsuarioModel(Long id, String nomeUsuario, String rg, String cpf, String nomeMae, List<OrcamentoModel> orcamentos) {
         this.id = id;
         this.nomeUsuario = nomeUsuario;
         this.rg = rg;
         this.cpf = cpf;
         this.nomeMae = nomeMae;
+        this.orcamentos = orcamentos;
     }
 
     public Long getId() {
@@ -77,6 +86,14 @@ public class UsuarioModel implements Serializable {
 
     public void setNomeMae(String nomeMae) {
         this.nomeMae = nomeMae;
+    }
+
+    public List<OrcamentoModel> getOrcamentos() {
+        return orcamentos;
+    }
+
+    public void setOrcamentos(List<OrcamentoModel> orcamentos) {
+        this.orcamentos = orcamentos;
     }
 
     @Override

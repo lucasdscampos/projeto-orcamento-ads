@@ -27,9 +27,15 @@ public class OrcamentoModel implements Serializable {
     private BigDecimal valorICMS;
 
     @ManyToOne
-    @JoinColumn(name="cliente_id", referencedColumnName = "id")
-    @JsonBackReference
+    @JoinColumn(name="cliente_id", referencedColumnName = "id", nullable = true)
+    @JsonBackReference("cliente-orcamento")
     private ClienteModel cliente;
+
+    @ManyToOne
+    @JoinColumn(name="usuario_id", referencedColumnName = "id", nullable = true)
+    @JsonBackReference("usuario-orcamento")
+    private UsuarioModel usuario;
+
 
     public void calcularIcms() {
         this.valorICMS = this.icmsEstados.getStrategy().calcular(this.valorOrcamento);
@@ -37,12 +43,13 @@ public class OrcamentoModel implements Serializable {
 
     public OrcamentoModel(){}
 
-    public OrcamentoModel(Long id, IcmsEstados icmsEstados, @NotNull BigDecimal valorOrcamento, BigDecimal valorICMS, ClienteModel cliente) {
+    public OrcamentoModel(Long id, IcmsEstados icmsEstados, @NotNull BigDecimal valorOrcamento, BigDecimal valorICMS, ClienteModel cliente, UsuarioModel usuario) {
         this.id = id;
         this.icmsEstados = icmsEstados;
         this.valorOrcamento = valorOrcamento;
         this.valorICMS = valorICMS;
         this.cliente = cliente;
+        this.usuario = usuario;
     }
 
     public Long getId() {
@@ -84,6 +91,14 @@ public class OrcamentoModel implements Serializable {
 
     public void setCliente(ClienteModel cliente) {
         this.cliente = cliente;
+    }
+
+    public UsuarioModel getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioModel usuario) {
+        this.usuario = usuario;
     }
 
     @Override

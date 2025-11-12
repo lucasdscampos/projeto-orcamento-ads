@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Cadastro de Orçamentos</title>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,7 +57,33 @@
         form button:hover {
             background-color: #4a54c9;
         }
-        #supplierSearchResults {
+        table {
+            width: 100%;
+            max-width: 800px;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f7f7f7;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .search-container {
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        #supplierSearchResultsCliente, #supplierSearchResultsUsuario {
             border: 1px solid #ddd;
             margin-top: 5px;
         }
@@ -72,6 +99,11 @@
             color: #2a9d8f;
             margin-top: 10px;
         }
+        .radio-group label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: normal;
+        }
     </style>
 </head>
 <body>
@@ -80,17 +112,6 @@
     
     <form th:action="@{/orcamentos}" th:object="${orcamentoModel}" method="post">
         
-        <label>Pesquisar Cliente (por Nome ou CPF):</label>
-        <input type="text" id="supplierSearchTerm" class="form-control" placeholder="Digite o nome ou CPF do cliente...">
-        <button type="button" id="searchSupplierButton" class="btn btn-primary mt-4">Pesquisar</button>
-
-        <div id="supplierSearchResults"></div>
-        <div id="selectedSupplierName"></div>
-
-        <input type="hidden" id="clienteId" name="clienteId" />
-
-        <hr>
-
         <label>Valor do Orçamento:</label>
         <input type="number" step="0.01" th:field="*{valorOrcamento}" required />
 
@@ -101,38 +122,119 @@
             <option value="ICMS_RJ">Rio de Janeiro (RJ)</option>
         </select>
         
+        <hr>
+
+        <div class="radio-group">
+            <label>Tipo de Orçamento:</label>
+            <input type="radio" id="tipoCliente" name="tipoDono" value="cliente" checked>
+            <label for="tipoCliente">Cliente</label>
+            
+            <input type="radio" id="tipoUsuario" name="tipoDono" value="usuario">
+            <label for="tipoUsuario">Usuário</label>
+        </div>
+
+        <div id="searchClienteContainer" class="search-container">
+            <label>Pesquisar Cliente (por Nome ou CPF):</label>
+            <input type="text" id="searchTermCliente" class="form-control" placeholder="Digite o nome ou CPF...">
+            <button type="button" id="searchButtonCliente" class="btn btn-primary mt-4">Pesquisar Cliente</button>
+            <div id="supplierSearchResultsCliente"></div>
+            <input type="hidden" id="clienteId" name="clienteId" />
+        </div>
+
+        <div id="searchUsuarioContainer" class="search-container" style="display:none;">
+            <label>Pesquisar Usuário (por Nome):</label>
+            <input type="text" id="searchTermUsuario" class="form-control" placeholder="Digite o nome do usuário...">
+            <button type="button" id="searchButtonUsuario" class="btn btn-primary mt-4">Pesquisar Usuário</button>
+            <div id="supplierSearchResultsUsuario"></div>
+            <input type="hidden" id="usuarioId" name="usuarioId" />
+        </div>
+
+        <div id="selectedSupplierName"></div>
+        
         <button type="submit">Salvar Orçamento</button>
     </form>
 
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <h2>Orçamentos Cadastrados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Valor do Orçamento</th>
+                <th>Valor ICMS</th>
+                <th>Dono (Cliente/Usuário)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="orcamento : ${orcamentos}">
+                <td th:text="${orcamento.id}"></td>
+                <td th:text="${'R$ ' + #numbers.formatDecimal(orcamento.valorOrcamento, 1, 2, 'COMMA')}"></td>
+                <td th:text="${'R$ ' + #numbers.formatDecimal(orcamento.valorICMS, 1, 2, 'COMMA')}"></td>
+                <td>
+                    <span th:if="${orcamento.cliente != null}" th:text="${orcamento.cliente.nome} + ' (Cliente)'"></span>
+                    <span th:if="${orcamento.usuario != null}" th:text="${orcamento.usuario.nomeUsuario} + ' (Usuário)'"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             
-            $('#searchSupplierButton').click(function() {
-                var searchTerm = $('#supplierSearchTerm').val(); 
-                
+            $('input[type=radio][name=tipoDono]').change(function() {
+                if (this.value == 'cliente') {
+                    $('#searchClienteContainer').show();
+                    $('#searchUsuarioContainer').hide();
+                }
+                else if (this.value == 'usuario') {
+                    $('#searchClienteContainer').hide();
+                    $('#searchUsuarioContainer').show();
+                }
+                $('#supplierSearchResultsCliente, #supplierSearchResultsUsuario').empty();
+                $('#selectedSupplierName').empty();
+                $('#clienteId, #usuarioId').val('');
+            });
+
+            $('#searchButtonCliente').click(function() {
+                var searchTerm = $('#searchTermCliente').val(); 
                 $.get('/clientes/search', { termo: searchTerm }, function(data) {
                     var results = "";
-                    
                     $.each(data, function(index, cliente) {
-                        results += '<div class="supplier-result" data-supplier-id="' + cliente.id + '">' 
+                        results += '<div class="supplier-result cliente" data-id="' + cliente.id + '" data-name="' + cliente.nome + ' (CPF: ' + cliente.cpf + ')">' 
                                   + cliente.nome + ' (CPF: ' + cliente.cpf + ')' + '</div>';
                     });
-                    
-                    $('#supplierSearchResults').html(results);
+                    $('#supplierSearchResultsCliente').html(results);
+                });
+            });
+
+            $('#searchButtonUsuario').click(function() {
+                var searchTerm = $('#searchTermUsuario').val(); 
+                $.get('/usuarios/search', { nome: searchTerm }, function(data) {
+                    var results = "";
+                    $.each(data, function(index, usuario) {
+                        results += '<div class="supplier-result usuario" data-id="' + usuario.id + '" data-name="' + usuario.nomeUsuario + '">' 
+                                  + usuario.nomeUsuario + ' (ID: ' + usuario.id + ')' + '</div>';
+                    });
+                    $('#supplierSearchResultsUsuario').html(results);
                 });
             });
 
             $(document).on('click', '.supplier-result', function() {
-                var idSupplier = $(this).data('supplier-id'); 
-                var supplierName = $(this).text(); 
+                var id = $(this).data('id'); 
+                var name = $(this).data('name');
                 
-                $('#clienteId').val(idSupplier);
+                $('#clienteId, #usuarioId').val(''); 
                 
-                $('#selectedSupplierName').text('Cliente Selecionado: ' + supplierName);
-                $('#supplierSearchResults').empty();
+                if ($(this).hasClass('cliente')) {
+                    $('#clienteId').val(id);
+                    $('#selectedSupplierName').text('Cliente Selecionado: ' + name);
+                    $('#supplierSearchResultsCliente').empty();
+                } else {
+                    $('#usuarioId').val(id);
+                    $('#selectedSupplierName').text('Usuário Selecionado: ' + name);
+                    $('#supplierSearchResultsUsuario').empty();
+                }
             });
         });
     </script>

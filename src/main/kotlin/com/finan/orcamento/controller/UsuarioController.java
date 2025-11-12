@@ -51,15 +51,23 @@ public class UsuarioController {
     @GetMapping("/orcamentos")
     public String showOrcamentoPage(Model model) {
         model.addAttribute("orcamentoModel", new OrcamentoModel());
+        
+        model.addAttribute("orcamentos", orcamentoService.buscarCadastro());
         return "orcamentoPage"; 
     }
 
     @PostMapping("/orcamentos")
-    public String cadastrarOrcamento(@ModelAttribute OrcamentoModel orcamentoModel, @RequestParam("clienteId") Long clienteId) {
+    public String cadastrarOrcamento(@ModelAttribute OrcamentoModel orcamentoModel,
+                                     @RequestParam(name = "clienteId", required = false) Long clienteId,
+                                     @RequestParam(name = "usuarioId", required = false) Long usuarioId) {
         
-        ClienteModel cliente = clienteService.buscarPorId(clienteId);
-        
-        orcamentoModel.setCliente(cliente);
+        if (clienteId != null) {
+            ClienteModel cliente = clienteService.buscarPorId(clienteId);
+            orcamentoModel.setCliente(cliente);
+        } else if (usuarioId != null) {
+            UsuarioModel usuario = usuarioService.buscaId(usuarioId);
+            orcamentoModel.setUsuario(usuario);
+        }
         
         orcamentoService.cadastrarOrcamento(orcamentoModel);
         
@@ -69,12 +77,16 @@ public class UsuarioController {
     @GetMapping("/clientes/search")
     @ResponseBody
     public List<ClienteModel> searchClientes(@RequestParam("termo") String termo) {
-        
         List<ClienteModel> porNome = clienteService.buscarPorNome(termo);
         if (!porNome.isEmpty()) {
             return porNome;
         }
-        
         return clienteService.buscarPorCpf(termo); 
+    }
+    
+    @GetMapping("/usuarios/search")
+    @ResponseBody
+    public List<UsuarioModel> searchUsuarios(@RequestParam("nome") String nome) {
+        return usuarioService.buscaPorNome(nome); 
     }
 }
