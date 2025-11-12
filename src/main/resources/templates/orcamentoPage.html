@@ -1,0 +1,141 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cadastro de Orçamentos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1, h2 {
+            color: #444;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+        form label {
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        form input, form select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        form button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            background-color: #5c67f2;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        form button:hover {
+            background-color: #4a54c9;
+        }
+        #supplierSearchResults {
+            border: 1px solid #ddd;
+            margin-top: 5px;
+        }
+        .supplier-result {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .supplier-result:hover {
+            background-color: #f0f0f0;
+        }
+        #selectedSupplierName {
+            font-weight: bold;
+            color: #2a9d8f;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cadastrar Orçamento</h1>
+    
+    <form th:action="@{/orcamentos}" th:object="${orcamentoModel}" method="post">
+        
+        <label>Pesquisar Cliente (por Nome ou CPF):</label>
+        <input type="text" id="supplierSearchTerm" class="form-control" placeholder="Digite o nome ou CPF do cliente...">
+        <button type="button" id="searchSupplierButton" class="btn btn-primary mt-4">Pesquisar</button>
+
+        <div id="supplierSearchResults"></div>
+        <div id="selectedSupplierName"></div>
+
+        <input type="hidden" id="clienteId" name="clienteId" />
+
+        <hr>
+
+        <label>Valor do Orçamento:</label>
+        <input type="number" step="0.01" th:field="*{valorOrcamento}" required />
+
+        <label>Estado (ICMS):</label>
+        <select th:field="*{icmsEstados}" required>
+            <option value="ICMS_MG">Minas Gerais (MG)</option>
+            <option value="ICMS_SP">São Paulo (SP)</option>
+            <option value="ICMS_RJ">Rio de Janeiro (RJ)</option>
+        </select>
+        
+        <button type="submit">Salvar Orçamento</button>
+    </form>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            
+            $('#searchSupplierButton').click(function() {
+                var searchTerm = $('#supplierSearchTerm').val(); 
+                
+                $.get('/clientes/search', { termo: searchTerm }, function(data) {
+                    var results = "";
+                    
+                    $.each(data, function(index, cliente) {
+                        results += '<div class="supplier-result" data-supplier-id="' + cliente.id + '">' 
+                                  + cliente.nome + ' (CPF: ' + cliente.cpf + ')' + '</div>';
+                    });
+                    
+                    $('#supplierSearchResults').html(results);
+                });
+            });
+
+            $(document).on('click', '.supplier-result', function() {
+                var idSupplier = $(this).data('supplier-id'); 
+                var supplierName = $(this).text(); 
+                
+                $('#clienteId').val(idSupplier);
+                
+                $('#selectedSupplierName').text('Cliente Selecionado: ' + supplierName);
+                $('#supplierSearchResults').empty();
+            });
+        });
+    </script>
+
+</body>
+</html>

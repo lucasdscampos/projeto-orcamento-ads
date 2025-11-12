@@ -1,16 +1,8 @@
 package com.finan.orcamento.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -25,16 +17,26 @@ public class UsuarioModel implements Serializable {
     @Column(name="nome_usuario")
     private String nomeUsuario;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "id")
-    private List<OrcamentoModel> orcamentos = new ArrayList<>();
+    @NotBlank
+    @Column(name="rg")
+    private String rg;
+
+    @NotBlank
+    @Column(name="cpf")
+    private String cpf;
+
+    @NotBlank
+    @Column(name="nome_mae")
+    private String nomeMae;
 
     public UsuarioModel(){}
 
-    public UsuarioModel(Long id, String nomeUsuario, List<OrcamentoModel> orcamentos) {
+    public UsuarioModel(Long id, String nomeUsuario, String rg, String cpf, String nomeMae) {
         this.id = id;
         this.nomeUsuario = nomeUsuario;
-        this.orcamentos = orcamentos;
+        this.rg = rg;
+        this.cpf = cpf;
+        this.nomeMae = nomeMae;
     }
 
     public Long getId() {
@@ -53,12 +55,28 @@ public class UsuarioModel implements Serializable {
         this.nomeUsuario = nomeUsuario;
     }
 
-    public List<OrcamentoModel> getOrcamentos() {
-        return orcamentos;
+    public String getRg() {
+        return rg;
     }
 
-    public void setOrcamentos(List<OrcamentoModel> orcamentos) {
-        this.orcamentos = orcamentos;
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getNomeMae() {
+        return nomeMae;
+    }
+
+    public void setNomeMae(String nomeMae) {
+        this.nomeMae = nomeMae;
     }
 
     @Override

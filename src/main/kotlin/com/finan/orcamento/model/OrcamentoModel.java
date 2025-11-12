@@ -1,11 +1,9 @@
 package com.finan.orcamento.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.finan.orcamento.model.enums.IcmsEstados;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,8 +27,9 @@ public class OrcamentoModel implements Serializable {
     private BigDecimal valorICMS;
 
     @ManyToOne
-    @JoinColumn(name="usuario_id", referencedColumnName = "id")
-    private UsuarioModel usuario;
+    @JoinColumn(name="cliente_id", referencedColumnName = "id")
+    @JsonBackReference
+    private ClienteModel cliente;
 
     public void calcularIcms() {
         this.valorICMS = this.icmsEstados.getStrategy().calcular(this.valorOrcamento);
@@ -38,12 +37,12 @@ public class OrcamentoModel implements Serializable {
 
     public OrcamentoModel(){}
 
-    public OrcamentoModel(Long id, IcmsEstados icmsEstados, @NotNull BigDecimal valorOrcamento, BigDecimal valorICMS, UsuarioModel usuario) {
+    public OrcamentoModel(Long id, IcmsEstados icmsEstados, @NotNull BigDecimal valorOrcamento, BigDecimal valorICMS, ClienteModel cliente) {
         this.id = id;
         this.icmsEstados = icmsEstados;
         this.valorOrcamento = valorOrcamento;
         this.valorICMS = valorICMS;
-        this.usuario = usuario;
+        this.cliente = cliente;
     }
 
     public Long getId() {
@@ -79,12 +78,12 @@ public class OrcamentoModel implements Serializable {
         this.valorICMS = valorICMS;
     }
 
-    public UsuarioModel getUsuario() {
-        return usuario;
+    public ClienteModel getCliente() {
+        return cliente;
     }
 
-    public void setUsuario(UsuarioModel usuario) {
-        this.usuario = usuario;
+    public void setCliente(ClienteModel cliente) {
+        this.cliente = cliente;
     }
 
     @Override

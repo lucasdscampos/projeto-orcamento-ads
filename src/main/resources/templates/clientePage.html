@@ -5,6 +5,8 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>Cadastro de Clientes</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,14 +48,14 @@
             padding: 10px;
             margin-top: 20px;
             border: none;
-            background-color: #5c67f2;
+            background-color: #2a9d8f;
             color: white;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
         }
         form button:hover {
-            background-color: #4a54c9;
+            background-color: #268a7f;
         }
         table {
             width: 100%;
@@ -75,71 +77,66 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        .btn-acao {
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+            color: white;
+            margin-right: 5px;
+        }
+        .btn-excluir {
+            background-color: #e63946;
+        }
+        .btn-excluir:hover {
+            background-color: #c9303c;
+        }
+        .btn-editar {
+            background-color: #fca311;
+        }
+        .btn-editar:hover {
+            background-color: #e8950f;
+        }
     </style>
-    <title>usuario</title>
 </head>
 <body>
-    <h1>Cadastro de usuários</h1>
-    <form id="usuarioForm" th:action="@{/usuarios}" th:object="${usuarioModel}" method="post">
-        <label>Nome do Usuário</label>
-        <input type="text" id="nomeUsuario" th:field="*{nomeUsuario}"><br>
 
-        <label>RG</label>
-        <input type="text" id="rg" th:field="*{rg}"><br>
-
-        <label>CPF</label>
-        <input type="text" id="cpf" th:field="*{cpf}"><br>
-
-        <label>Nome da Mãe</label>
-        <input type="text" id="nomeMae" th:field="*{nomeMae}"><br>
-
-        <button id="salvarUsuario" type="submit">Salvar</button>
+    <h1>Cadastro de Clientes</h1>
+    
+    <form th:action="@{/clientes}" th:object="${clienteModel}" method="post">
+        <label>Nome do Cliente:</label>
+        <input type="text" th:field="*{nome}" placeholder="Digite o nome" required />
+        <label>CPF:</label>
+        <input type="text" th:field="*{cpf}" placeholder="Digite o CPF" required />
+        <button type="submit">Salvar Cliente</button>
     </form>
 
-    <h2>Usuários Cadastrados</h2>
+    <h2>Clientes Cadastrados</h2>
     <table>
         <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nome do Usuário</th>
-            <th>RG</th>
-            <th>CPF</th>
-            <th>Nome da Mãe</th>
-        </tr>
+            <tr>
+                <th>ID</th>
+                <th>Nome do Cliente</th>
+                <th>CPF</th>
+                <th>Ações</th>
+            </tr>
         </thead>
         <tbody>
-        <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario.id}"></td>
-            <td th:text="${usuario.nomeUsuario}"></td>
-            <td th:text="${usuario.rg}"></td>
-            <td th:text="${usuario.cpf}"></td>
-            <td th:text="${usuario.nomeMae}"></td>
-        </tr>
+            <tr th:each="cliente : ${clientes}">
+                <td th:text="${cliente.id}"></td>
+                <td th:text="${cliente.nome}"></td>
+                <td th:text="${cliente.cpf}"></td>
+                <td>
+                    <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn-acao btn-editar">
+                        Editar
+                    </a>
+                    
+                    <a th:href="@{/clientes/{id}/deletar(id=${cliente.id})}" class="btn-acao btn-excluir">
+                        Excluir
+                    </a>
+                </td>
+            </tr>
         </tbody>
     </table>
 
-    <script>
-        document.getElementById("usuarioForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Impede o envio padrão do formulário
-
-        var form = event.target;
-        var formData = new FormData(form);
-
-        fetch(form.action, {
-            method: form.method,
-            body: formData
-        }).then(response => {
-            if (response.ok) {
-                window.location.href = "/usuarios/pesquisa";
-                alert("Salvo com sucesso");
-            } else {
-                console.error("Erro ao salvar o usuário");
-            }
-        }).catch(error => {
-            console.error("Erro ao salvar o usuário", error);
-            alert("Erro ao Salvar");
-        });
-    });
-    </script>
 </body>
 </html>

@@ -35,7 +35,12 @@ public class UsuarioService {
         newUsuarioModel.setNomeUsuario(usuarioModel.getNomeUsuario());
         return usuarioRepository.save(newUsuarioModel);
     }
+    
     public void deletaUsuario(Long id){
         usuarioRepository.deleteById(id);
+    }
+
+    public List<UsuarioModel> buscaPorNome(String nome) {
+        return usuarioRepository.findByNomeUsuarioContainingIgnoreCase(nome);
     }
 }
