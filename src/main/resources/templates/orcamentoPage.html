@@ -5,108 +5,217 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cadastro de Orçamentos</title>
     
     <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3f37c9;
+            --success: #2a9d8f;
+            --danger: #e63946;
+            --warning: #fca311;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #2b2d42;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding-bottom: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        h1, h2 {
-            color: #444;
-        }
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+
+        .navbar {
             width: 100%;
-            max-width: 400px;
+            background-color: var(--primary);
+            padding: 15px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
         }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 15px;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .navbar a:hover {
+            background-color: var(--primary-hover);
+        }
+
+        h1, h2 {
+            color: var(--text);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #e9ecef;
+        }
+
         form label {
             display: block;
-            margin-top: 10px;
+            margin-top: 15px;
+            margin-bottom: 5px;
             text-align: left;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
+            color: #555;
         }
+
         form input, form select {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.3s;
         }
+        
+        form input:focus, form select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
         form button {
             width: 100%;
-            padding: 10px;
-            margin-top: 20px;
+            padding: 12px;
+            margin-top: 25px;
             border: none;
-            background-color: #5c67f2;
+            background-color: var(--success);
             color: white;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.1s, background-color 0.3s;
         }
         form button:hover {
-            background-color: #4a54c9;
+            background-color: #21867a;
+            transform: translateY(-1px);
         }
-        table {
-            width: 100%;
-            max-width: 800px;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        .radio-group {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f1f3f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            border: 1px solid #e9ecef;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f7f7f7;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .search-container {
-            border: 1px solid #eee;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 4px;
-        }
-        #supplierSearchResultsCliente, #supplierSearchResultsUsuario {
-            border: 1px solid #ddd;
-            margin-top: 5px;
-        }
-        .supplier-result {
-            padding: 8px;
-            cursor: pointer;
-        }
-        .supplier-result:hover {
-            background-color: #f0f0f0;
-        }
-        #selectedSupplierName {
-            font-weight: bold;
-            color: #2a9d8f;
-            margin-top: 10px;
+        .radio-group input {
+            width: auto;
+            margin-right: 5px;
         }
         .radio-group label {
-            display: inline-block;
-            margin-right: 15px;
-            font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        
+        #searchButtonCliente, #searchButtonUsuario {
+            background-color: var(--primary);
+            margin-top: 10px;
+        }
+
+        .supplier-result {
+            background: white;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-top: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .supplier-result:hover {
+            background-color: #e2e6ea;
+            border-color: var(--primary);
+        }
+        
+        #selectedSupplierName {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #e6fffa;
+            color: #006d5b;
+            border: 1px solid #2a9d8f;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table {
+            width: 90%;
+            max-width: 1000px;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: var(--card-bg);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 13px;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        tr:hover {
+            background-color: #f1f3f5;
         }
     </style>
+    <title>Cadastro de Orçamentos</title>
 </head>
 <body>
+
+    <nav class="navbar">
+        <a href="/usuarios/pesquisa">Gerenciar Usuários</a>
+        <a href="/clientes">Gerenciar Clientes</a>
+        <a href="/orcamentos">Novo Orçamento</a>
+    </nav>
 
     <h1>Cadastrar Orçamento</h1>
     
@@ -122,29 +231,31 @@
             <option value="ICMS_RJ">Rio de Janeiro (RJ)</option>
         </select>
         
-        <hr>
-
-        <div class="radio-group">
+        <hr> <div class="radio-group">
             <label>Tipo de Orçamento:</label>
-            <input type="radio" id="tipoCliente" name="tipoDono" value="cliente" checked>
-            <label for="tipoCliente">Cliente</label>
+            <div>
+                <input type="radio" id="tipoCliente" name="tipoDono" value="cliente" checked>
+                <label for="tipoCliente">Cliente</label>
+            </div>
             
-            <input type="radio" id="tipoUsuario" name="tipoDono" value="usuario">
-            <label for="tipoUsuario">Usuário</label>
+            <div>
+                <input type="radio" id="tipoUsuario" name="tipoDono" value="usuario">
+                <label for="tipoUsuario">Usuário</label>
+            </div>
         </div>
 
         <div id="searchClienteContainer" class="search-container">
             <label>Pesquisar Cliente (por Nome ou CPF):</label>
-            <input type="text" id="searchTermCliente" class="form-control" placeholder="Digite o nome ou CPF...">
-            <button type="button" id="searchButtonCliente" class="btn btn-primary mt-4">Pesquisar Cliente</button>
+            <input type="text" id="searchTermCliente" placeholder="Digite o nome ou CPF...">
+            <button type="button" id="searchButtonCliente">Pesquisar Cliente</button>
             <div id="supplierSearchResultsCliente"></div>
             <input type="hidden" id="clienteId" name="clienteId" />
         </div>
 
         <div id="searchUsuarioContainer" class="search-container" style="display:none;">
             <label>Pesquisar Usuário (por Nome):</label>
-            <input type="text" id="searchTermUsuario" class="form-control" placeholder="Digite o nome do usuário...">
-            <button type="button" id="searchButtonUsuario" class="btn btn-primary mt-4">Pesquisar Usuário</button>
+            <input type="text" id="searchTermUsuario" placeholder="Digite o nome do usuário...">
+            <button type="button" id="searchButtonUsuario">Pesquisar Usuário</button>
             <div id="supplierSearchResultsUsuario"></div>
             <input type="hidden" id="usuarioId" name="usuarioId" />
         </div>
@@ -153,7 +264,6 @@
         
         <button type="submit">Salvar Orçamento</button>
     </form>
-
 
     <h2>Orçamentos Cadastrados</h2>
     <table>
@@ -238,6 +348,5 @@
             });
         });
     </script>
-
 </body>
 </html>

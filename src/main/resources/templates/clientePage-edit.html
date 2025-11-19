@@ -7,65 +7,133 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3f37c9;
+            --success: #2a9d8f;
+            --danger: #e63946;
+            --warning: #fca311;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #2b2d42;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding-bottom: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        h1 {
-            color: #444;
-        }
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+
+        .navbar {
             width: 100%;
-            max-width: 400px;
+            background-color: var(--primary);
+            padding: 15px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
         }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 15px;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .navbar a:hover {
+            background-color: var(--primary-hover);
+        }
+
+        h1 {
+            color: var(--text);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #e9ecef;
+        }
+
         form label {
             display: block;
-            margin-top: 10px;
+            margin-top: 15px;
+            margin-bottom: 5px;
             text-align: left;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
+            color: #555;
         }
+
         form input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.3s;
         }
+        
+        form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
         form button {
             width: 100%;
-            padding: 10px;
-            margin-top: 20px;
+            padding: 12px;
+            margin-top: 25px;
             border: none;
-            background-color: #fca311;
-            color: white;
-            border-radius: 4px;
+            background-color: var(--warning);
+            color: #333;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.1s, background-color 0.3s;
         }
         form button:hover {
             background-color: #e8950f;
+            transform: translateY(-1px);
         }
-        a.voltar {
-            margin-top: 20px;
+
+        .link-voltar {
+            margin-top: 10px;
             text-decoration: none;
-            color: #5c67f2;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .link-voltar:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
         }
     </style>
 
     <title>Editar Cliente</title>
 </head>
 <body>
+
+    <nav class="navbar">
+        <a href="/usuarios/pesquisa">Gerenciar Usuários</a>
+        <a href="/clientes">Gerenciar Clientes</a>
+        <a href="/orcamentos">Novo Orçamento</a>
+    </nav>
 
     <h1>Editar Cliente</h1>
     
@@ -80,7 +148,7 @@
         <button type="submit">Atualizar Cliente</button>
     </form>
     
-    <a th:href="@{/clientes}" class="voltar">Voltar para a lista</a>
+    <a th:href="@{/clientes}" class="link-voltar">← Voltar para a lista</a>
 
 </body>
 </html>
