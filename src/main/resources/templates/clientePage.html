@@ -29,7 +29,6 @@
             align-items: center;
         }
 
-        /* BARRA DE NAVEGAÇÃO */
         .navbar {
             width: 100%;
             background-color: var(--primary);
@@ -37,9 +36,10 @@
             margin-bottom: 30px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             text-align: center;
+            display: block;
         }
         .navbar a {
-            color: white;
+            color: white !important;
             text-decoration: none;
             font-weight: bold;
             margin: 0 15px;
@@ -47,25 +47,26 @@
             padding: 8px 12px;
             border-radius: 4px;
             transition: background 0.3s;
+            display: inline-block;
         }
         .navbar a:hover {
-            background-color: var(--primary-hover);
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
-        h1, h2 {
+        h1, h2, h3 {
             color: var(--text);
             margin-bottom: 20px;
             text-align: center;
         }
 
-        form {
+        .container-box {
             background: var(--card-bg);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             margin-bottom: 40px;
-            width: 100%;
-            max-width: 500px;
+            width: 90%;
+            max-width: 1000px;
             border: 1px solid #e9ecef;
         }
 
@@ -79,17 +80,16 @@
             color: #555;
         }
 
-        form input {
+        form input, form select {
             width: 100%;
             padding: 12px;
             border-radius: 6px;
             border: 1px solid #ced4da;
             box-sizing: border-box;
             font-size: 15px;
-            transition: border-color 0.3s;
         }
         
-        form input:focus {
+        form input:focus, form select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
@@ -106,29 +106,37 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
-            transition: transform 0.1s, background-color 0.3s;
+            transition: transform 0.1s;
         }
-        form button:hover {
-            background-color: #21867a;
-            transform: translateY(-1px);
+        form button:hover { transform: translateY(-1px); }
+
+        .relatorio-form {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            flex-wrap: wrap;
         }
+        .relatorio-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .btn-relatorio {
+            background-color: var(--primary);
+            margin-top: 0;
+            height: 45px;
+        }
+        .btn-relatorio:hover { background-color: var(--primary-hover); }
 
         table {
-            width: 90%;
-            max-width: 1000px;
+            width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            background: var(--card-bg);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-radius: 8px;
-            overflow: hidden;
+            margin-top: 15px;
         }
 
         th {
             background-color: var(--bg-color);
             color: var(--text);
             font-weight: 700;
-            text-transform: uppercase;
             font-size: 13px;
             padding: 15px;
             text-align: left;
@@ -141,33 +149,27 @@
             color: #444;
         }
 
-        tr:nth-child(even) {
-            background-color: #fcfcfc;
-        }
-
-        tr:hover {
-            background-color: #f1f3f5;
-        }
+        tr:nth-child(even) { background-color: #fcfcfc; }
+        tr:hover { background-color: #f1f3f5; }
 
         .btn-acao {
             display: inline-block;
             padding: 6px 12px;
             text-decoration: none;
             border-radius: 4px;
-            color: white;
+            color: white !important;
             font-size: 13px;
             font-weight: bold;
             margin-right: 5px;
             text-align: center;
-            transition: background 0.3s;
         }
         .btn-excluir { background-color: var(--danger); }
         .btn-excluir:hover { background-color: #c9303c; }
         
-        .btn-editar { background-color: var(--warning); color: #333; }
+        .btn-editar { background-color: var(--warning); color: #333 !important; }
         .btn-editar:hover { background-color: #e8950f; }
     </style>
-    <title>Cadastro de Clientes</title>
+    <title>Gerenciar Clientes</title>
 </head>
 <body>
 
@@ -177,42 +179,106 @@
         <a href="/orcamentos">Novo Orçamento</a>
     </nav>
 
-    <h1>Cadastro de Clientes</h1>
-    
-    <form th:action="@{/clientes}" th:object="${clienteModel}" method="post">
-        <label>Nome do Cliente:</label>
-        <input type="text" th:field="*{nome}" placeholder="Digite o nome" required />
-        <label>CPF:</label>
-        <input type="text" th:field="*{cpf}" placeholder="Digite o CPF" required />
-        <button type="submit">Salvar Cliente</button>
-    </form>
+    <div class="container-box">
+        <h2>Cadastro de Cliente</h2>
+        <form th:action="@{/clientes}" th:object="${clienteModel}" method="post">
+            <label>Nome do Cliente:</label>
+            <input type="text" th:field="*{nome}" placeholder="Digite o nome" required />
+            
+            <label>CPF:</label>
+            <input type="text" th:field="*{cpf}" placeholder="Digite o CPF" required />
+            
+            <button type="submit">Salvar Cliente</button>
+        </form>
+    </div>
 
-    <h2>Clientes Cadastrados</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome do Cliente</th>
-                <th>CPF</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="cliente : ${clientes}">
-                <td th:text="${cliente.id}"></td>
-                <td th:text="${cliente.nome}"></td>
-                <td th:text="${cliente.cpf}"></td>
-                <td>
-                    <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn-acao btn-editar">
-                        Editar
-                    </a>
-                    <a th:href="@{/clientes/{id}/deletar(id=${cliente.id})}" class="btn-acao btn-excluir">
-                        Excluir
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="container-box" style="border-left: 5px solid var(--primary);">
+        <h2>Relatório de Gastos</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+            Selecione um intervalo de datas e (opcionalmente) um cliente para ver o total gasto.
+        </p>
+        
+        <form action="/clientes/relatorio" method="get">
+            <div class="relatorio-form">
+                <div class="relatorio-group">
+                    <label>Data Início:</label>
+                    <input type="date" name="dataInicio" th:value="${dataInicio}" required />
+                </div>
+                
+                <div class="relatorio-group">
+                    <label>Data Fim:</label>
+                    <input type="date" name="dataFim" th:value="${dataFim}" required />
+                </div>
+
+                <div class="relatorio-group">
+                    <label>Cliente (Opcional):</label>
+                    <select name="clienteId">
+                        <option value="">-- Todos os Clientes --</option>
+                        <option th:each="c : ${clientes}" 
+                                th:value="${c.id}" 
+                                th:text="${c.nome}"
+                                th:selected="${c.id == clienteSelecionadoId}"></option>
+                    </select>
+                </div>
+
+                <div class="relatorio-group">
+                    <button type="submit" class="btn-relatorio">Gerar Relatório</button>
+                </div>
+            </div>
+        </form>
+
+        <div th:if="${relatorioOrcamentos != null}">
+            <h3 style="margin-top: 30px; color: var(--primary); text-align: left;">Resultados:</h3>
+            
+            <table th:if="${not #lists.isEmpty(relatorioOrcamentos)}">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="orc : ${relatorioOrcamentos}">
+                        <td th:text="${orc.id}"></td>
+                        <td th:text="${orc.cliente != null ? orc.cliente.nome : '---'}"></td>
+                        <td th:text="${#temporals.format(orc.dataCadastro, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${'R$ ' + #numbers.formatDecimal(orc.valorOrcamento, 1, 2, 'COMMA')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p th:if="${#lists.isEmpty(relatorioOrcamentos)}" style="color: var(--danger); margin-top: 15px; font-weight: bold;">
+                Nenhum orçamento encontrado para este período.
+            </p>
+        </div>
+    </div>
+
+    <div class="container-box">
+        <h2>Clientes Cadastrados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Cliente</th>
+                    <th>CPF</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cliente : ${clientes}">
+                    <td th:text="${cliente.id}"></td>
+                    <td th:text="${cliente.nome}"></td>
+                    <td th:text="${cliente.cpf}"></td>
+                    <td>
+                        <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn-acao btn-editar">Editar</a>
+                        <a th:href="@{/clientes/{id}/deletar(id=${cliente.id})}" class="btn-acao btn-excluir">Excluir</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 </body>
 </html>

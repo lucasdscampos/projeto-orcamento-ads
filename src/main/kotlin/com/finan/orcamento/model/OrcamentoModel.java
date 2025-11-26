@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +27,9 @@ public class OrcamentoModel implements Serializable {
     @Column(name="valor_icms")
     private BigDecimal valorICMS;
 
+    @Column(name = "data_cadastro")
+    private LocalDate dataCadastro;
+
     @ManyToOne
     @JoinColumn(name="cliente_id", referencedColumnName = "id", nullable = true)
     @JsonBackReference("cliente-orcamento")
@@ -36,6 +40,12 @@ public class OrcamentoModel implements Serializable {
     @JsonBackReference("usuario-orcamento")
     private UsuarioModel usuario;
 
+    @PrePersist
+    public void prePersist() {
+        if(this.dataCadastro == null) {
+            this.dataCadastro = LocalDate.now();
+        }
+    }
 
     public void calcularIcms() {
         this.valorICMS = this.icmsEstados.getStrategy().calcular(this.valorOrcamento);
@@ -52,54 +62,27 @@ public class OrcamentoModel implements Serializable {
         this.usuario = usuario;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public IcmsEstados getIcmsEstados() {
-        return icmsEstados;
-    }
-
-    public void setIcmsEstados(IcmsEstados icmsEstados) {
-        this.icmsEstados = icmsEstados;
-    }
+    public IcmsEstados getIcmsEstados() { return icmsEstados; }
+    public void setIcmsEstados(IcmsEstados icmsEstados) { this.icmsEstados = icmsEstados; }
 
     @NotNull
-    public BigDecimal getValorOrcamento() {
-        return valorOrcamento;
-    }
+    public BigDecimal getValorOrcamento() { return valorOrcamento; }
+    public void setValorOrcamento(@NotNull BigDecimal valorOrcamento) { this.valorOrcamento = valorOrcamento; }
 
-    public void setValorOrcamento(@NotNull BigDecimal valorOrcamento) {
-        this.valorOrcamento = valorOrcamento;
-    }
+    public BigDecimal getValorICMS() { return valorICMS; }
+    public void setValorICMS(BigDecimal valorICMS) { this.valorICMS = valorICMS; }
 
-    public BigDecimal getValorICMS() {
-        return valorICMS;
-    }
+    public ClienteModel getCliente() { return cliente; }
+    public void setCliente(ClienteModel cliente) { this.cliente = cliente; }
 
-    public void setValorICMS(BigDecimal valorICMS) {
-        this.valorICMS = valorICMS;
-    }
+    public UsuarioModel getUsuario() { return usuario; }
+    public void setUsuario(UsuarioModel usuario) { this.usuario = usuario; }
 
-    public ClienteModel getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(ClienteModel cliente) {
-        this.cliente = cliente;
-    }
-
-    public UsuarioModel getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(UsuarioModel usuario) {
-        this.usuario = usuario;
-    }
+    public LocalDate getDataCadastro() { return dataCadastro; }
+    public void setDataCadastro(LocalDate dataCadastro) { this.dataCadastro = dataCadastro; }
 
     @Override
     public boolean equals(Object o) {
